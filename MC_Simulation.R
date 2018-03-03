@@ -11,6 +11,7 @@
 library(ggplot2)
 library(moments)
 library(stargazer)
+library(ggthemes)
 
 set.seed(40028922)
 rep<-10000                         # Number of repetitions in the MC sim
@@ -50,7 +51,9 @@ for (j in 1:length(parameter)){
     xlab('Normal Distribution')+
     ylab('Monte Carlo Simulation')+
     ggtitle('Q-Q Plot',paste('p=',theta,'     rep=',rep,'     n=',n, sep=''))
-  ggsave(paste('QQplot-',i,j,'.png', sep=''), plot, device = 'jpeg')
+  ggsave(paste('QQplot-',i,j,'.png', sep=''), 
+         plot+theme_minimal()
+         , device = 'jpeg')
 }}
 
 table<-file('JB-Test.txt')
