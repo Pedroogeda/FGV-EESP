@@ -1,0 +1,49 @@
+###################################################################
+################## Econometria 1 - Problem Set 2 ##################
+################### José Parreiras Antunes Neto ###################
+###################################################################
+
+library(ggplot2)
+
+# Problem 4 ---------------------------------------------------------------
+
+# Equation: Y=10+0.1X+u
+# u_i~N(0,(X_i))
+# X~N(2,1)
+
+
+rep<-10000
+obs<-300
+b<-matrix(NA, ncol=2, nrow=rep)
+var_b<-list(NA)
+u<-vector('numeric',length = 300)
+
+for (i in 1:rep){
+  x<-cbind(rep(1,obs),rnorm(obs, mean = 2, sd = 1))
+  for(j in 1:obs){
+  u[j]<-rnorm(1, mean = 0, sd = abs(x[j,2]))
+  A<-diag(obs)
+  A[j,j]<-x[j,2]^2 #Var(ui)
+  }
+  y<-10*x[,1]+0.1*x[,2]+u
+  
+  b[i,]<-t(solve(t(x)%*%x)%*%t(x)%*%y)
+  var_b[[i]]<-solve(t(x)%*%x)%*%t(x)%*%A%*%x%*%solve(t(x)%*%x) #(X'X)^-1X'AX(X'X)^-1
+}
+
+qplot(b[,2], geom='histogram')+ggtitle('Histogram of slope')+xlab('')+ylab('')
+mean(b[,2])
+sd(b[,2])
+
+test.t<-matrix(NA, ncol=4, nrow=rep)
+colnames(test.t)<-c('0.1','0.95','0.5','0')
+
+for (i in 1:rep){
+  test.t[i,1]<-(b[i,2]-0.1)/sqrt(var_b[[i]][2,2])
+  test.t[i,2]<-(b[i,2]-0.95)/sqrt(var_b[[i]][2,2])
+  test.t[i,3]<-(b[i,2]-0.5)/sqrt(var_b[[i]][2,2])
+  test.t[i,4]<-(b[i,2]-0)/sqrt(var_b[[i]][2,2])
+}
+
+test.p<-pnorm(test.t)
+rejection<-colSums(0.975<test.p | test.p<0.025)
