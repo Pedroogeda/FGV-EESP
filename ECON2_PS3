@@ -1,3 +1,9 @@
+library(wooldridge)
+library(dplyr)
+data(bwght)
+dados<-mutate(bwght, smokes = ifelse(cigs>0,1,0))
+
+# All Rights Reserved ®
 
 #PROBLEM 4 
 #QUESTION A
